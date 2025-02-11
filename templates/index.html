@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Rank Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px 0px #0000001a;
+            display: inline-block;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #5cb85c;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+    </style>
+</head>
+<body>
+    <h2>Enter Book Details</h2>
+    <form action="/predict" method="POST">
+        <label for="day">Day:</label>
+        <select name="day" required>
+            <option value="0">Sunday</option>
+            <option value="1">Monday</option>
+            <option value="2">Tuesday</option>
+            <option value="3">Wednesday</option>
+            <option value="4">Thursday</option>
+            <option value="5">Friday</option>
+            <option value="6">Saturday</option>
+        </select>
+
+        <label for="date">Date:</label>
+        <input type="number" name="date" min="1" max="31" required>
+
+        <label for="month">Month:</label>
+        <input type="number" name="month" min="1" max="12" required>
+
+        <label for="genre">Genre:</label>
+        <select name="genre" required>
+            <option value="Literary Fiction">Literary Fiction</option>
+            <option value="Autobiography">Autobiography</option>
+            <option value="Romance">Romance</option>
+            <option value="Science Fiction">Science Fiction</option>
+            <option value="Historical Fiction">Historical Fiction</option>
+            <option value="True Crime">True Crime</option>
+            <option value="Adventure">Adventure</option>
+            <option value="Mystery">Mystery</option>
+            <option value="Travel">Travel</option>
+            <option value="Biography">Biography</option>
+            <option value="Young Adult (YA)">Young Adult (YA)</option>
+            <option value="Children’s Fiction">Children’s Fiction</option>
+            <option value="Dystopian">Dystopian</option>
+            <option value="Fantasy">Fantasy</option>
+            <option value="Cookbook">Cookbook</option>
+            <option value="Psychology">Psychology</option>
+            <option value="Science">Science</option>
+            <option value="Thriller">Thriller</option>
+            <option value="Health & Wellness">Health & Wellness</option>
+            <option value="Horror">Horror</option>
+            <option value="History">History</option>
+            <option value="Self-Help">Self-Help</option>
+            <option value="Philosophy">Philosophy</option>
+            <option value="Magical Realism">Magical Realism</option>
+            <option value="Memoir">Memoir</option>
+        </select>
+
+        <label for="group">Select Group:</label>
+        <select name="group" id="group">
+            <option value="book">Book</option>
+            <option value="kindle">Kindle</option>
+        </select>
+
+        <button type="submit">Predict Top 10 Books</button>
+    </form>
+</body>
+</html>
