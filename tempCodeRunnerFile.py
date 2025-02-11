@@ -1,0 +1,1 @@
+    df_filtered["Predicted Rank"] = df_filtered["Predicted Rank"].astype(int)
