@@ -5,49 +5,138 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Top Book Recommendations</title>
     <style>
-        table {
-            width: 50%;
-            border-collapse: collapse;
-            margin: 20px auto;
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        h2 {
+            font-size: 30px;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 70%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
         th, td {
             padding: 12px;
             text-align: left;
+            font-size: 18px;
             border: 1px solid #ddd;
         }
+
         th {
-            background-color: green;
+            background-color: #2980b9;
             color: white;
+            font-weight: bold;
         }
+
         tr:nth-child(even) {
-            background-color: #f2f2f2;
+            background-color: #ecf0f1;
         }
-        .go-back {
+
+        tr:hover {
+            background-color: #dfe6e9;
+        }
+
+        a {
+            text-decoration: none;
+            color: #3498db;
+            font-size: 18px;
+            padding: 12px 24px;
+            background-color: #f0f8ff;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        a:hover {
+            background-color: #2980b9;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        /* Styling for "Go Back" Link */
+        .go-back a {
+            text-decoration: none;
+            color: #28a745;
+            font-size: 18px;
+            padding: 12px 24px;
+            background-color: #f1fff1;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .go-back a:hover {
+            background-color: #28a745;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .analysis-text, .go-back {
+            font-size: 18px;
+            margin: 30px auto;
             text-align: center;
-            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            table {
+                width: 90%;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            a, .go-back a {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
 <body>
 
-<h2 style="text-align: center; color: blue;">Top 10 Book Recommendations</h2>
+    <h2>Top 10 Book Recommendations</h2>
 
-<table>
-    <tr>
-        <th>Rank</th>
-        <th>Title</th>
-    </tr>
-    {% for index, row in top_books.iterrows() %}
-    <tr>
-        <td>{{ row['Predicted Rank'] }}</td>
-        <td>{{ row['title_copy'] }}</td>
-    </tr>
-    {% endfor %}
-</table>
+    <table>
+        <tr>
+            <th>Rank</th>
+            <th>Title</th>
+        </tr>
+        {% for index, row in top_books.iterrows() %}
+        <tr>
+            <td>{{ row['Predicted Rank'] }}</td>
+            <td>{{ row['title_copy'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 
-<div class="go-back">
-    <a href="/">Go Back</a>
-</div>
+    <div class="analysis-text">
+        <a href="{{ url_for('analysis') }}">Click to see the analysis</a>
+    </div>
+
+    <div class="go-back">
+        <a href="/">Go Back</a>
+    </div>
 
 </body>
 </html>
