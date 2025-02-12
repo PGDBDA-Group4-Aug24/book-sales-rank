@@ -1,0 +1,59 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predicted Book Trends</title>
+</head>
+<body>
+    <h1>Top Predicted Books</h1>
+    <ul>
+        {% for book in top_books %}
+            <li>{{ book.title_copy }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Trend by Month</h2>
+    <img src="data:image/png;base64,{{ month_trend_img }}" alt="Trend by Month">
+
+    <h2>Trend by Day</h2>
+    <img src="data:image/png;base64,{{ day_trend_img }}" alt="Trend by Day">
+
+    <h2>Trend by Date</h2>
+    <img src="data:image/png;base64,{{ date_trend_img }}" alt="Trend by Date">
+</body>
+</html> -->
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trends</title>
+</head>
+<body>
+    <h1>Books Trend by Month</h1>
+    <img src="data:image/png;base64,{{ month_trend_img }}" alt="Books Trend Plot"/>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Trends</title>
+</head>
+<body>
+    <h1>Trend Plots for Top Books</h1>
+
+    {% for plot in plots %}
+        <h2>{{ plot.title }}</h2>
+
+        <h3>Monthly Trend</h3>
+        <img src="data:image/png;base64,{{ plot.month_trend_img }}" alt="Monthly Trend">
+
+        <h3>Daily Trend</h3>
+        <img src="data:image/png;base64,{{ plot.day_trend_img }}" alt="Daily Trend">
+        <hr>
+    {% endfor %}
+</body>
+</html>
