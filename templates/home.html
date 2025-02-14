@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="px-4 py-5 my-5 text-center">
+    <i class="bi bi-book-half display-1 text-primary mb-4"></i>
+    <h1 class="display-5 fw-bold">Welcome to Book Prediction Analysis</h1>
+    <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">
+            Analyze your book's potential success using our advanced prediction system.
+            Get detailed insights and market analysis for your literary work.
+        </p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <a href="{{ url_for('prediction') }}" class="btn btn-primary btn-lg px-4 gap-3">
+                Start Prediction
+            </a>
+            <a href="{{ url_for('analysis') }}" class="btn btn-outline-secondary btn-lg px-4">
+                View Analysis
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 py-5">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <i class="bi bi-graph-up text-primary h1"></i>
+                <h5 class="card-title">Accurate Predictions</h5>
+                <p class="card-text">Get detailed success predictions based on market trends and reader preferences.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <i class="bi bi-pie-chart text-primary h1"></i>
+                <h5 class="card-title">Deep Analysis</h5>
+                <p class="card-text">Understand your book's potential with comprehensive market analysis.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <i class="bi bi-lightbulb text-primary h1"></i>
+                <h5 class="card-title">Actionable Insights</h5>
+                <p class="card-text">Receive practical recommendations to improve your book's market success.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

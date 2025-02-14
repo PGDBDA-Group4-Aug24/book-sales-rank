@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2 class="mb-0">Prediction Results</h2>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h4>Book Details</h4>
+                    <dl class="row">
+                        <dt class="col-sm-3">Title:</dt>
+                        <dd class="col-sm-9">{{ book_data.title }}</dd>
+
+                        <dt class="col-sm-3">Author:</dt>
+                        <dd class="col-sm-9">{{ book_data.author }}</dd>
+
+                        <dt class="col-sm-3">Genre:</dt>
+                        <dd class="col-sm-9">{{ book_data.genre }}</dd>
+                    </dl>
+                </div>
+
+                <div class="mb-4">
+                    <h4>Prediction Results</h4>
+                    <div class="progress mb-3">
+                        <div class="progress-bar" role="progressbar"
+                             style="width: {{ prediction.success_rate }}%"
+                             aria-valuenow="{{ prediction.success_rate }}"
+                             aria-valuemin="0"
+                             aria-valuemax="100">
+                            {{ prediction.success_rate }}%
+                        </div>
+                    </div>
+
+                    <dl class="row">
+                        <dt class="col-sm-3">Genre Match:</dt>
+                        <dd class="col-sm-9">{{ prediction.genre_match }}</dd>
+
+                        <dt class="col-sm-3">Target Audience:</dt>
+                        <dd class="col-sm-9">{{ prediction.target_audience }}</dd>
+
+                        <dt class="col-sm-3">Market Potential:</dt>
+                        <dd class="col-sm-9">{{ prediction.market_potential }}</dd>
+                    </dl>
+                </div>
+
+                <div class="text-center">
+                    <a href="{{ url_for('analysis') }}" class="btn btn-primary">View Detailed Analysis</a>
+                    <a href="{{ url_for('prediction') }}" class="btn btn-secondary">New Prediction</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
