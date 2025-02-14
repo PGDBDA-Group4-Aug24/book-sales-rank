@@ -5,6 +5,11 @@ import pandas as pd
 from datetime import datetime
 import pickle
 import os
+import matplotlib.pyplot as plt
+import io
+import base64
+from tensorflow.keras.models import load_model
+import keras.losses
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -188,6 +193,81 @@ def predict():
     return render_template("results.html", top_books=global_top_books_df)
 
 #----------------------------------------------------
+@app.route("/plot_trend", methods=["GET", "POST"])  # Allow both GET and POST methods
+def plot_trends():
+    global global_top_books_df  # Access the global variable containing top books
+    global df  # Access the global DataFrame containing the full dataset
+
+    # Check if global_top_books_df exists and is not empty
+    if global_top_books_df is None or global_top_books_df.empty:
+        return "Error: No books found for trends."
+
+    # Check if df exists and is not empty
+    if df is None or df.empty:
+        return "Error: No data available to plot trends."
+
+    # Extract titles from global_top_books_df
+    top_titles = global_top_books_df['title_copy'].tolist()  # 'title_copy' used in top_books_df
+
+    # Filter the main df for rows where the Title is in top_titles
+    filtered_df = df[df['Title'].isin(top_titles)]  # 'Title' is the column in the main df
+
+    # Check if filtered_df has data
+    if filtered_df.empty:
+        return "Error: No matching titles found in the dataset for trend plotting."
+
+    # Create multiple trend plots for each title
+    plots = []
+    for title in top_titles:
+        book_data = filtered_df[filtered_df['Title'] == title]
+
+        if book_data.empty:
+            continue  # Skip this title if no data is found in the main df
+
+        # Group by month and day for trend plotting
+        trend_by_month = book_data.groupby('month')['rank'].mean()
+        trend_by_day = book_data.groupby('day')['rank'].mean()
+
+        # Create the month trend line plot
+        plt.figure(figsize=(8, 6))
+        trend_by_month.plot(kind='line', marker='o', linestyle='-', color='skyblue')
+        plt.title(f"Monthly Rank Trend for {title}")
+        plt.xlabel("Month")
+        plt.ylabel("Average Rank")
+        plt.grid(True)
+
+        # Save the monthly plot to a BytesIO object
+        buf_month = io.BytesIO()
+        plt.savefig(buf_month, format='png')
+        buf_month.seek(0)
+        month_img_data = base64.b64encode(buf_month.read()).decode('utf-8')
+        buf_month.close()
+
+        # Create the day trend line plot
+        plt.figure(figsize=(8, 6))
+        trend_by_day.plot(kind='line', marker='o', linestyle='-', color='lightgreen')
+        plt.title(f"Daily Rank Trend for {title}")
+        plt.xlabel("Day")
+        plt.ylabel("Average Rank")
+        plt.grid(True)
+
+        # Save the daily plot to a BytesIO object
+        buf_day = io.BytesIO()
+        plt.savefig(buf_day, format='png')
+        buf_day.seek(0)
+        day_img_data = base64.b64encode(buf_day.read()).decode('utf-8')
+        buf_day.close()
+
+        # Append the images to the list of plots for rendering
+        plots.append({
+            'title': title,
+            'month_trend_img': month_img_data,
+            'day_trend_img': day_img_data
+        })
+
+    # Render the plots in a template
+    return render_template('trends.html', plots=plots)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
