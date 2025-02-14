@@ -1,0 +1,41 @@
+.bi {
+    margin-right: 0.5rem;
+}
+
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.progress {
+    height: 25px;
+}
+
+.progress-bar {
+    transition: width 1.5s ease-in-out;
+}
+
+.alert {
+    border-left: 5px solid;
+}
+
+.alert-info {
+    border-left-color: var(--bs-info);
+}
+
+.alert-success {
+    border-left-color: var(--bs-success);
+}
+
+.alert-warning {
+    border-left-color: var(--bs-warning);
+}
+
+.footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
