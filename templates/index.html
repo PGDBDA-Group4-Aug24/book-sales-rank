@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Opening Effect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Background Animation */
+        body {
+            min-height: 100vh;A
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .background {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            right: -100px;
+            animation-delay: -3s;
+        }
+
+        .shape:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            bottom: -100px;
+            left: -50px;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Book Container */
+        .book-container {
+            position: relative;
+            width: 450px;
+            height: 650px;
+            perspective: 1200px;
+        }
+
+        .book {
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            background-color: #A9D7F3;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.25);
+            position: relative;
+            transform-origin: left center;
+            transition: transform 1.5s ease-out;
+        }
+
+        .book img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background-color: #A9D7F3;
+            border-radius: 15px;
+        }
+
+        /* Overlay for Amazon Text */
+        .amazon-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 50px;
+            font-weight: bold;
+            color: black;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Button Overlay */
+        .button-overlay {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            font-size: 20px;
+            background-color: white;
+            border: none;
+            color: black;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease;
+        }
+
+        .button-overlay:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Book Opening Animation */
+        .open-book {
+            transform: rotateY(-180deg);
+        }
+
+        /* Second Page (form) Styling */
+        .second-page {
+            display: none;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            color: #333;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            border-radius: 20px;
+            box-shadow: 0px 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .second-page form {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+
+        .second-page label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+
+        .second-page input, .second-page select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 18px;
+            border-radius: 8px;
+            border: 1px solid #dcdcdc;
+            font-size: 16px;
+            color: #333;
+            background-color: #fafafa;
+            transition: all 0.3s ease;
+        }
+
+        .second-page input:focus, .second-page select:focus {
+            border-color: #7dc0ec;
+            outline: none;
+            background-color: #fff;
+        }
+
+        .second-page button {
+            width: 100%;
+            padding: 14px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .second-page button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Media Queries for responsiveness */
+        @media (max-width: 768px) {
+            .second-page {
+                padding: 30px;
+            }
+
+            .second-page form {
+                padding: 30px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background">
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="book-container">
+        <div class="book" id="book">
+            <div class="amazon-text">Amazon</div>
+        </div>
+        <button class="button-overlay" onclick="openBook()">OPEN</button>
+    </div>
+
+    <div class="second-page" id="second-page">
+        <h2>Enter Book Details</h2>
+        <form action="/predict" method="POST">
+            <label for="day">Day:</label>
+            <select name="day" required>
+                <option value="0">Sunday</option>
+                <option value="1">Monday</option>
+                <option value="2">Tuesday</option>
+                <option value="3">Wednesday</option>
+                <option value="4">Thursday</option>
+                <option value="5">Friday</option>
+                <option value="6">Saturday</option>
+            </select>
+
+            <label for="date">Date:</label>
+            <input type="number" name="date" min="1" max="31" required>
+
+            <label for="month">Month:</label>
+            <input type="number" name="month" min="1" max="12" required>
+
+            <label for="genre">Genre:</label>
+            <select name="genre" required>
+                <option value="biography">Biography</option>
+                <option value="fantasy">Fantasy</option>
+                <option value="fiction">Fiction</option>
+                <option value="history">History</option>
+                <option value="horror">Horror</option>
+                <option value="mystery">Mystery</option>
+                <option value="romance">Romance</option>
+                <option value="science fiction">Science Fiction</option>
+            </select>
+            <label for="group">Select Group:</label>
+            <select name="group" id="group">
+                <option value="book">Book</option>
+                <option value="kindle">Kindle</option>
+            </select>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        function openBook() {
+    const book = document.getElementById('book');
+    const bookContainer = document.querySelector('.book-container');
+    const secondPage = document.getElementById('second-page');
+
+    // Add the book opening animation
+    book.classList.add('open-book');
+
+    // Wait for the animation to finish before hiding the first UI
+    setTimeout(() => {
+        bookContainer.style.display = 'none';  // Hide the book UI completely
+        secondPage.style.display = 'block';    // Show the second page
+        secondPage.style.opacity = 1;
+    }, 1500); // Match this with your CSS animation time
+}
+
+    </script>
+</body>
+</html>

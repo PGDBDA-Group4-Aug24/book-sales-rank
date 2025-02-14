@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Trends</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        label {
+            font-size: 18px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .checkbox-container {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-container input {
+            margin: 5px;
+        }
+
+        .checkbox-container label {
+            display: block;
+            margin-left: 10px;
+            font-size: 16px;
+        }
+
+        .book-plot {
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .book-plot h2 {
+            color: #3498db;
+        }
+
+        .book-plot h3 {
+            color: #16a085;
+            margin-top: 10px;
+        }
+
+        .book-plot img {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+
+        .button-overlay {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .button-overlay:hover {
+            background-color: #2980b9;
+        }
+
+        hr {
+            border: 1px solid #ccc;
+            margin-top: 20px;
+        }
+    </style>
+
+    <script>
+        // Function to update the visibility of plots based on selected checkboxes
+        function updateCharts() {
+            const selectedBooks = Array.from(document.querySelectorAll('.book-checkbox:checked'))
+                .map(checkbox => checkbox.value);
+            const plots = document.getElementsByClassName('book-plot');
+
+            // Loop through each plot and show/hide based on the selected books
+            for (let plot of plots) {
+                const plotTitle = plot.getAttribute('data-title');
+
+                if (selectedBooks.includes(plotTitle) || selectedBooks.includes('All')) {
+                    plot.style.display = 'block';
+                } else {
+                    plot.style.display = 'none';
+                }
+            }
+        }
+
+        // Function to toggle the "Select All" checkbox
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.getElementById('select-all');
+            const checkboxes = document.querySelectorAll('.book-checkbox');
+
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+
+            updateCharts();
+        }
+    </script>
+</head>
+<body>
+    <h1>Trend Plots for Top Books</h1>
+
+    <!-- Checkbox List for selecting books -->
+    <label>Select Book(s):</label>
+    <div class="checkbox-container">
+        <label>
+            <input type="checkbox" id="select-all" onclick="toggleSelectAll()"> Select All
+        </label>
+        {% for plot in plots %}
+            <label>
+                <input type="checkbox" class="book-checkbox" value="{{ plot.title }}" onclick="updateCharts()"> 
+                {{ plot.title }}
+            </label>
+        {% endfor %}
+    </div>
+
+    <hr>
+
+    <!-- Display the trend plots dynamically -->
+    {% for plot in plots %}
+        <div class="book-plot" data-title="{{ plot.title }}" style="display: block;">
+            <h2>{{ plot.title }}</h2>
+
+            <h3>Monthly Trend</h3>
+            <img src="data:image/png;base64,{{ plot.month_trend_img }}" alt="Monthly Trend">
+
+            <h3>Daily Trend</h3>
+            <img src="data:image/png;base64,{{ plot.day_trend_img }}" alt="Daily Trend">
+
+            <hr>
+        </div>
+    {% endfor %}
+</body>
+</html>

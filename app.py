@@ -135,9 +135,59 @@ def predict():
 
     df_filtered = df_filtered.drop(columns=[ 'GENRE', 'TITLE', 'AUTHOR', 'GROUP', 'FORMAT', 'PUBLISHER'])
     
-    #-------------------------------------------------------------------------
+    #model setup
 
+    feature_input = [col for col in df_filtered.columns if col not in [
+        "title_encoded", "rank", "title_copy"]]
+    numeric_features = ['month_sin', 'month_cos', 'date_sin', 'date_cos', 'day_sin', 'day_cos']
 
+    numeric_features = np.array([[month_sin, month_cos, date_sin, date_cos, day_sin, day_cos]])
+    # categorical_features = np.array([[author_encodings, publisher_encoding, genre_encoded, group_encoded, format_encoding, title_encoding]])
+    
+
+    # Reshape categorical inputs for embeddings
+    # Convert categorical features into numpy arrays and reshape
+    X_input_author = np.array(df_filtered["Author_encoded"].values)  # Shape: (n_samples, 1)
+    X_input_publisher = np.array(df_filtered["Publisher_encoded"].values)
+    X_input_genre = np.array(df_filtered["genre_encoded"].values)
+    X_input_group = np.array(df_filtered["Group_encoded"].values)
+    X_input_format = np.array(df_filtered["Format_encoded"].values)
+    X_input_title = np.array(df_filtered["title_encoded"].values)
+    print(X_input_author.shape)
+
+    # Normalize the numeric features
+    numeric_features = feature_scaler.transform(numeric_features)
+    X_scaled = np.tile(numeric_features, (df_filtered.shape[0], 1))
+    
+    # Reshape categorical inputs for embedding layers
+    X_input_author = X_input_author.reshape(-1, 1)
+    X_input_publisher = X_input_publisher.reshape(-1, 1)
+    X_input_genre = X_input_genre.reshape(-1, 1)
+    X_input_group = X_input_group.reshape(-1, 1)
+    X_input_format = X_input_format.reshape(-1, 1)
+    X_input_title = X_input_title.reshape(-1, 1)
+
+    max_publisher_encoded = df_filtered["Publisher_encoded"].max()
+    print(f"Maximum value in Publisher_encoded: {max_publisher_encoded}")
+
+    # Predict using both numerical and categorical inputs
+    predictions = model.predict([X_scaled, X_input_author, X_input_publisher, X_input_genre, X_input_group, X_input_format, X_input_title]).flatten()[0]
+
+    # Inverse transform the target variable
+    # Process predictions
+    df_filtered["Predicted Rank"] = predictions
+    df_filtered["Predicted Rank"] = df_filtered["Predicted Rank"].astype(int)
+    df_filtered["Predicted Rank"] = df_filtered["Predicted Rank"].abs()
+
+    # Store the top books for trend plotting
+    global global_top_books_df
+    
+    global_top_books_df = df_filtered[["title_copy", "Predicted Rank"]].drop_duplicates(
+        subset="title_copy").sort_values(by="Predicted Rank").head(10)
+    
+    return render_template("results.html", top_books=global_top_books_df)
+
+#----------------------------------------------------
 
 if __name__ == '__main__':
     app.run(debug=True)
