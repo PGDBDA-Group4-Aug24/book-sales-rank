@@ -1,10 +1,28 @@
-import boto3
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, from_unixtime, date_format, input_file_name, from_json, explode, lit , date_format
+import sys
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
+from awsglue.context import GlueContext
+from awsglue.job import Job
+
+# ********************
+# Glue Job Initialization
+# ********************
+args = getResolvedOptions(sys.argv, ['JOB_NAME'])
+sc = SparkContext.getOrCreate()
+glueContext = GlueContext(sc)
+spark = glueContext.spark_session
+job = Job(glueContext)
+job.init(args['JOB_NAME'], args)
+
+#import boto3
+from pyspark.sql.functions import (
+    input_file_name, from_json, explode, col, split, lit, from_unixtime,
+    date_format, concat_ws, to_timestamp, min as spark_min
+)
 from pyspark.sql.types import MapType, StringType, LongType
 
 # Initialize Spark session
-spark = SparkSession.builder.appName("ProcessJSONFilesDirectly").getOrCreate()
+#spark = SparkSession.builder.appName("ProcessJSONFilesDirectly").getOrCreate()
 
 # Define input and output S3 paths
 # The wildcard pattern will instruct Spark to read all JSON files in the directory.
@@ -71,17 +89,47 @@ df_exploded = df_exploded.withColumn("timestamp", from_unixtime(col("timestamp")
                  .withColumn("hour", date_format(col("timestamp"), "HH"))
 
 # Select final columns
-df_final = df_exploded.select("timestamp", "rank", "asin", "year", "month", "date", "day", "hour")
+final_df = df_exploded.select("timestamp", "rank", "asin", "year", "month", "date", "day", "hour")
+
+# Load the CSV File with Metadata and Merge via Inner Join on asin
+csv_file_path = "s3://mergedjsontoparquet/books_with_8_genres.csv"  # Update with your actual CSV path
+metadata_df = spark.read.option("header", "true").csv(csv_file_path)
+final_df = final_df.join(metadata_df, on="asin", how="inner")
+
+final_df = final_df.dropna()
+
+# Group by daily values and additional metadata columns.
+df_daily = final_df.groupBy(
+    "asin", "year", "month", "date", "day", "GROUP", "FORMAT", "TITLE", "AUTHOR", "PUBLISHER", "GENRE"
+).agg(
+    spark_min("rank").alias("rank")  # choose the minimum rank for that day
+)
+
+# Create a timestamp column from year, month, and date
+df_daily = df_daily.withColumn(
+    "timestamp",
+    to_timestamp(concat_ws("-", col("year"), col("month"), col("date")), "yyyy-MM-dd")
+)
+
+
+# Select the desired columns (adjust order as needed)
+df_daily = df_daily.select(
+    "asin", "timestamp", "rank", "year", "month", "date", "day",
+    "GROUP", "FORMAT", "TITLE", "AUTHOR", "PUBLISHER", "GENRE"
+)
+
 
 # Write to CSV
 try:
     output_path = "s3://alljsontoparquet/output/"
     final_df.write.mode("overwrite").parquet(output_path)
     print("Processed files and merged into a single output.")
+    #final_df.coalesce(1).write.mode("overwrite").option("header", "true").csv(output_path)
 except Exception as e:
-    print(f"Error writing CSV: {str(e)}")
+    print(f"Error writing : {str(e)}")
 
-print(f"Total records: {df_final.count()}")
+print(f"Total records: {final_df.count()}")
 
 # Stop the Spark session
-spark.stop()
+#spark.stop()
+job.commit()
