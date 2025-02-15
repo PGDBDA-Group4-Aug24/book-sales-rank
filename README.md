@@ -8,4 +8,4 @@ The book market is highly competitive, and authors, publishers, and marketers of
 
 ## Architecture
 
-![Amazon Sales Rank Updated (1)](https://github.com/user-attachments/assets/a2e16cf0-5b0f-427e-a9ce-2120f0e1a672)
+![Amazon Sales Rank Updated (2)](https://github.com/user-attachments/assets/cd7169f0-9307-4514-9232-7a87b029ed71)
