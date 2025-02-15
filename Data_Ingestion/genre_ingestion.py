@@ -54,24 +54,36 @@ genre_dict = {
     }
 }
 
-# Define a function to assign genre based on TITLE using the genre_dict with regex matching
+# Flatten the genre dictionary and prepare a list of genre names and keywords
+genre_keywords = []
+genre_names = []
+
+for genre_type, genres in genre_dict.items():
+    for genre, keywords in genres.items():
+        genre_keywords.append(" ".join(keywords))  # Join keywords for each genre into one string
+        genre_names.append(genre)
+
+# Initialize the TF-IDF Vectorizer
+vectorizer = TfidfVectorizer(stop_words='english')
+
+# Vectorize the genre keywords (each genre becomes a vector)
+genre_vectors = vectorizer.fit_transform(genre_keywords)
+
+# Define a function to assign genre based on the TITLE using cosine similarity
 def assign_genre(row):
-    """
-    Assigns a genre to each row based on the TITLE column and the genre_dict using regex for keyword matching.
-    """
     title = str(row.get('TITLE', '')).lower()  # Safely handle missing 'TITLE'
     
-    # Iterate through the genre dictionary to find the most suitable genre
-    for genre_type, genres in genre_dict.items():
-        for genre, keywords in genres.items():
-            # Create a regex pattern that matches any of the keywords, allowing for approximation
-            # The pattern matches the keyword as a whole word, case insensitive
-            pattern = r'\b(?:' + '|'.join(re.escape(keyword) for keyword in keywords) + r')\b'
-            
-            # If any keyword is found in the title, assign the corresponding genre
-            if re.search(pattern, title, flags=re.IGNORECASE):
-                return genre
-    return 'Unknown'
+    # Vectorize the title
+    title_vector = vectorizer.transform([title])
+    
+    # Compute cosine similarities between the title vector and all genre vectors
+    similarities = cosine_similarity(title_vector, genre_vectors)
+    
+    # Find the index of the highest similarity score
+    best_match_index = np.argmax(similarities)
+    
+    # Return the genre corresponding to the highest similarity
+    return genre_names[best_match_index]
 
 # Apply the function to create a new column for Genre
 if 'TITLE' in df.columns:
