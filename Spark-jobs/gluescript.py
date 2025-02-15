@@ -1,6 +1,6 @@
 import sys
-from awsglue.context import GlueContext
 from awsglue.utils import getResolvedOptions
+from awsglue.context import GlueContext
 from pyspark.context import SparkContext
 from awsglue.job import Job
 
@@ -111,3 +111,4 @@ print("Processed files, grouped daily, and merged into a single output.")
 #df_daily.coalesce(1).write.mode("overwrite").option("header", "true").csv("s3://merged-df/all-csv/")
 
 job.commit()
+#spark.stop()
