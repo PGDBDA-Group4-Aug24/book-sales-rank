@@ -1,7 +1,7 @@
 import sys
+from awsglue.context import GlueContext
 from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
-from awsglue.context import GlueContext
 from awsglue.job import Job
 
 args = getResolvedOptions(sys.argv, ['group4'])
@@ -111,13 +111,3 @@ print("Processed files, grouped daily, and merged into a single output.")
 #df_daily.coalesce(1).write.mode("overwrite").option("header", "true").csv("s3://merged-df/all-csv/")
 
 job.commit()
-
-# Write to CSV
-# try:
-#     df_final.coalesce(1).write.mode("overwrite").option("header", "true").csv(output_file)
-# except Exception as e:
-#     print(f"Error writing CSV: {str(e)}")
-#
-# print(f"Total records: {df_final.count()}")
-# # Stop the Spark session
-# spark.stop()
